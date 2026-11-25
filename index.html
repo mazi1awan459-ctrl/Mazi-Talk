@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#5b4bdb">
+<title>Mazi Talk — Learn French</title>
+<style>
+:root{--purple:#5b4bdb;--ink:#202044;--muted:#74748d;--bg:#f6f6ff;--green:#20a875;--line:#e8e8f4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(120deg,#5143cc,#8068ee);color:white;padding:22px max(20px,calc((100% - 980px)/2)) 26px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font-size:22px;font-weight:900;letter-spacing:-.6px}.logo span{color:#ffe58c}
+.stats{display:flex;gap:9px}.pill{background:#ffffff22;border:1px solid #ffffff35;border-radius:30px;padding:8px 12px;font-size:13px;font-weight:800}
+.hero{padding:24px 0 8px}.hero h1{font-size:clamp(25px,5vw,38px);margin:0 0 8px}.hero p{margin:0;color:#eeeaff;max-width:600px;line-height:1.5}
+main{max-width:980px;margin:22px auto;padding:0 18px 50px;display:grid;grid-template-columns:1.5fr .8fr;gap:18px}
+.panel{background:white;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 5px 22px #28205c08}
+h2{font-size:19px;margin:0 0 14px}.sub{font-size:13px;color:var(--muted);margin-top:-8px;margin-bottom:16px}
+.lesson{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:15px;padding:14px;margin:10px 0;background:#fff}
+.lesson .num{width:42px;height:42px;border-radius:13px;background:#efedff;color:var(--purple);display:grid;place-items:center;font-weight:900}
+.lesson.done .num{background:#e2f8ef;color:#16845d}.lesson strong{display:block}.lesson small{color:var(--muted)}
+.lesson button,.primary{margin-left:auto;border:0;border-radius:12px;background:var(--purple);color:white;padding:10px 14px;font-weight:800;cursor:pointer}
+.lesson button:disabled{background:#e9e8f3;color:#999;cursor:not-allowed}
+.progress{height:9px;background:#eeeefa;border-radius:20px;overflow:hidden;margin:12px 0}.progress div{height:100%;background:var(--green);width:0;transition:.25s}
+.sidebox{margin-bottom:15px}.big{font-size:30px;font-weight:900;color:var(--purple)}.muted{color:var(--muted);font-size:13px}
+.word{background:#f7f6ff;border-radius:16px;padding:17px;margin:12px 0}.french{font-size:27px;font-weight:900;color:var(--purple)}.translation{color:var(--muted);margin-top:4px}
+button{font:inherit}.secondary{border:1px solid var(--line);background:white;border-radius:12px;padding:10px 13px;cursor:pointer;font-weight:700}
+.modal{position:fixed;inset:0;background:#17152c99;display:none;align-items:center;justify-content:center;padding:16px;z-index:5}.modal.show{display:flex}.dialog{background:white;width:min(100%,520px);border-radius:22px;padding:22px;max-height:90vh;overflow:auto}
+.dialog-head{display:flex;justify-content:space-between;align-items:center}.close{border:0;background:#f1f0fa;border-radius:50%;width:34px;height:34px;cursor:pointer}
+.question{font-size:21px;font-weight:850;margin:20px 0 15px}.answers{display:grid;gap:9px}.answer{padding:13px;border:2px solid var(--line);border-radius:13px;background:white;text-align:left;cursor:pointer;font-weight:700}.answer:hover{border-color:var(--purple)}.answer.correct{border-color:var(--green);background:#eafaf3}.answer.wrong{border-color:#e06b6b;background:#fff0f0}
+.feedback{min-height:25px;margin:12px 0;color:var(--green);font-weight:800}.next{width:100%;padding:13px;border:0;border-radius:13px;background:var(--purple);color:white;font-weight:900;cursor:pointer}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:0 15px 25px}
+@media(max-width:720px){main{grid-template-columns:1fr;margin-top:14px}.stats{gap:5px}.pill{padding:7px 9px;font-size:12px}.hero{padding-top:20px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="top"><div class="logo">🌍 Mazi <span>Talk</span></div><div class="stats"><div class="pill">⭐ <b id="xp">0</b> XP</div><div class="pill">🔥 <b id="streak">0</b></div></div></div>
+ <div class="hero"><h1>Learn French, one little step at a time.</h1><p>Start with simple English-to-French lessons. Listen, learn, practise and build your confidence every day.</p></div>
+</header>
+<main>
+<section class="panel">
+ <h2>Your learning path 🇫🇷</h2><p class="sub">A1 · Beginner French · Unit 1</p>
+ <div class="progress"><div id="bar"></div></div><p class="muted" id="progressText">0 of 5 lessons completed</p>
+ <div id="lessonList"></div>
+</section>
+<aside>
+ <section class="panel sidebox"><h2>Today's goal 🎯</h2><div class="big" id="goal">0 / 10 XP</div><div class="progress"><div id="goalBar"></div></div><p class="muted">Complete a lesson to earn XP.</p></section>
+ <section class="panel sidebox"><h2>Word of the day</h2><div class="word"><div class="french">Merci</div><div class="translation">Thank you</div><button class="secondary" onclick="speak('Merci')">🔊 Listen</button></div></section>
+ <section class="panel"><h2>Your progress</h2><div class="big" id="completed">0</div><p class="muted">Lessons completed</p><button class="secondary" onclick="resetProgress()">Reset demo progress</button></section>
+</aside>
+</main>
+<footer>© Mazi Talk · Beginner French learning demo · Progress is saved on this device.</footer>
+<div class="modal" id="modal"><div class="dialog">
+ <div class="dialog-head"><div><b id="lessonLabel">Lesson 1</b><div class="muted" id="stepLabel">Question 1 of 5</div></div><button class="close" onclick="closeLesson()">✕</button></div>
+ <div class="progress"><div id="quizBar"></div></div>
+ <div id="quizArea"></div>
+</div></div>
+<script>
+const lessons=[
+ {title:"Hello and goodbye",desc:"Learn your first greetings",qs:[
+  ["What does “Bonjour” mean?",["Goodbye","Hello / Good morning","Please"],1,"Bonjour","Hello / Good morning"],
+  ["How do you say “Goodbye”?",["Au revoir","Merci","Salut"],0,"Au revoir","Goodbye"],
+  ["What does “Salut” mean?",["Thank you","Hi / Bye (informal)","Please"],1,"Salut","Hi / Bye (informal)"],
+  ["Choose French for “Good evening”.",["Bonne nuit","Bonsoir","Bonjour"],1,"Bonsoir","Good evening"],
+  ["What does “À bientôt” mean?",["See you soon","Good night","Sorry"],0,"À bientôt","See you soon"]
+ ]},
+ {title:"Polite words",desc:"Say please and thank you",qs:[
+  ["How do you say “Thank you”?",["Pardon","Merci","S'il vous plaît"],1,"Merci","Thank you"],
+  ["What does “S'il vous plaît” mean?",["Please","Hello","Sorry"],0,"S'il vous plaît","Please"],
+  ["Choose French for “Sorry”.",["Merci","Pardon","Bonsoir"],1,"Pardon","Sorry / Excuse me"],
+  ["What does “De rien” mean?",["You're welcome","Goodbye","Good morning"],0,"De rien","You're welcome"],
+  ["How do you say “Yes”?",["Non","Oui","Peut-être"],1,"Oui","Yes"]
+ ]},
+ {title:"Introduce yourself",desc:"Share your name",qs:[
+  ["What does “Je m'appelle…” mean?",["I am called… / My name is…","I am fine","I live here"],0,"Je m'appelle…","My name is…"],
+  ["How do you say “I am…”?",["Tu es…","Je suis…","Il est…"],1,"Je suis…","I am…"],
+  ["What does “Et toi ?” mean?",["And you?","Who are you?","Where are you?"],0,"Et toi ?","And you?"],
+  ["Choose French for “Nice to meet you”.",["Enchanté(e)","Au revoir","Merci"],0,"Enchanté(e)","Nice to meet you"],
+  ["What does “Comment tu t'appelles ?” mean?",["How are you?","What's your name?","Where do you live?"],1,"Comment tu t'appelles ?","What's your name?"]
+ ]},
+ {title:"Numbers 1–5",desc:"Count in French",qs:[
+  ["What is “one” in French?",["Deux","Un","Trois"],1,"Un","One"],
+  ["What is “two” in French?",["Deux","Quatre","Cinq"],0,"Deux","Two"],
+  ["What is “three” in French?",["Un","Cinq","Trois"],2,"Trois","Three"],
+  ["What is “four” in French?",["Quatre","Deux","Un"],0,"Quatre","Four"],
+  ["What is “five” in French?",["Trois","Cinq","Quatre"],1,"Cinq","Five"]
+ ]},
+ {title:"Everyday basics",desc:"Useful beginner expressions",qs:[
+  ["What does “Ça va ?” mean?",["How are you? / Is it going well?","See you soon","Thank you"],0,"Ça va ?","How are you?"],
+  ["How do you say “I am fine”?",["Je vais bien","Je ne sais pas","À demain"],0,"Je vais bien","I am fine"],
+  ["What does “Je ne sais pas” mean?",["I don't know","I am ready","I am happy"],0,"Je ne sais pas","I don't know"],
+  ["Choose French for “Tomorrow”.",["Aujourd'hui","Demain","Hier"],1,"Demain","Tomorrow"],
+  ["What does “D'accord” mean?",["Okay / All right","Goodbye","Please"],0,"D'accord","Okay / All right"]
+ ]}
+];
+let state=JSON.parse(localStorage.getItem("maziTalkProgress")||'{"xp":0,"done":[],"streak":0}');
+let active=0, qi=0, score=0, locked=false;
+function save(){localStorage.setItem("maziTalkProgress",JSON.stringify(state));render()}
+function render(){
+ document.getElementById("xp").textContent=state.xp;document.getElementById("streak").textContent=state.streak;
+ document.getElementById("completed").textContent=state.done.length;
+ document.getElementById("progressText").textContent=`${state.done.length} of ${lessons.length} lessons completed`;
+ document.getElementById("bar").style.width=(state.done.length/lessons.length*100)+"%";
+ document.getElementById("goal").textContent=Math.min(state.xp%20,10)+" / 10 XP";
+ document.getElementById("goalBar").style.width=Math.min(state.xp%20,10)*10+"%";
+ document.getElementById("lessonList").innerHTML=lessons.map((l,i)=>`<div class="lesson ${state.done.includes(i)?'done':''}"><div class="num">${state.done.includes(i)?'✓':i+1}</div><div><strong>${l.title}</strong><small>${l.desc} · 5 questions</small></div><button onclick="startLesson(${i})">${state.done.includes(i)?'Review':'Start'}</button></div>`).join("");
+}
+function startLesson(i){active=i;qi=0;score=0;locked=false;document.getElementById("modal").classList.add("show");showQuestion()}
+function closeLesson(){document.getElementById("modal").classList.remove("show")}
+function showQuestion(){
+ locked=false;let q=lessons[active].qs[qi];
+ document.getElementById("lessonLabel").textContent=lessons[active].title;
+ document.getElementById("stepLabel").textContent=`Question ${qi+1} of ${lessons[active].qs.length}`;
+ document.getElementById("quizBar").style.width=(qi/lessons[active].qs.length*100)+"%";
+ document.getElementById("quizArea").innerHTML=`<div class="question">${q[0]}</div><div class="answers">${q[1].map((a,i)=>`<button class="answer" onclick="answer(${i})">${a}</button>`).join("")}</div><div class="feedback" id="feedback"></div><button class="next" id="next" style="display:none" onclick="nextQuestion()">Continue</button>`;
+}
+function answer(i){
+ if(locked)return;locked=true;let q=lessons[active].qs[qi], buttons=[...document.querySelectorAll(".answer")];
+ buttons[q[2]].classList.add("correct");
+ if(i===q[2]){score++;document.getElementById("feedback").textContent="Correct! Great work. 🎉"}
+ else{buttons[i].classList.add("wrong");document.getElementById("feedback").textContent="Good try! The correct answer is "+q[1][q[2]]+"."}
+ document.getElementById("next").style.display="block";
+}
+function nextQuestion(){
+ if(qi<lessons[active].qs.length-1){qi++;showQuestion();return}
+ let earned=score*2;state.xp+=earned;if(!state.done.includes(active))state.done.push(active);state.streak=Math.max(1,state.streak);
+ document.getElementById("quizBar").style.width="100%";
+ document.getElementById("quizArea").innerHTML=`<div style="text-align:center;padding:25px 5px"><div style="font-size:48px">🏆</div><h2>Lesson complete!</h2><p>You got ${score} out of 5 correct.</p><div class="big">+${earned} XP</div><p class="muted">Keep practising to remember your new French words.</p><button class="next" onclick="closeLesson()">Back to learning path</button></div>`;
+ save();
+}
+function speak(word){if('speechSynthesis' in window){let u=new SpeechSynthesisUtterance(word);u.lang='fr-FR';speechSynthesis.speak(u)}else alert("Audio pronunciation is not supported in this browser.")}
+function resetProgress(){if(confirm("Reset all demo progress on this device?")){state={xp:0,done:[],streak:0};save()}}
+render();
+</script>
+</body></html>
